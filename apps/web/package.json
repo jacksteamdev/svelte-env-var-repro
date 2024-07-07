@@ -1,10 +1,10 @@
 {
-  "name": "web",
+	"name": "web",
 	"version": "0.0.1",
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"dev": "vite dev",
+		"dev": "export PRIVATE_DYNAMIC=ghi789 && export PUBLIC_DYNAMIC=jkl000 && vite dev",
 		"build": "vite build",
 		"preview": "vite preview",
 		"test": "npm run test:integration && npm run test:unit",

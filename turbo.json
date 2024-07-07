@@ -2,9 +2,21 @@
   "$schema": "https://turbo.build/schema.json",
   "tasks": {
     "build": {
-      "dependsOn": ["^build"],
-      "inputs": ["$TURBO_DEFAULT", ".env*"],
-      "outputs": [".svelte-kit/**", ".vercel/**"]
+      "dependsOn": [
+        "^build"
+      ],
+      "inputs": [
+        "$TURBO_DEFAULT",
+        ".env*"
+      ],
+      "outputs": [
+        ".svelte-kit/**",
+        ".vercel/**"
+      ],
+      "env": [
+        "PUBLIC_*",
+        "PRIVATE_*"
+      ]
     },
     "lint": {},
     "dev": {
