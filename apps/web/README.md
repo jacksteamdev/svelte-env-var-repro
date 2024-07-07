@@ -1,38 +1,115 @@
-# create-svelte
+# SvelteKit Turbo Environment Variables Repro
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+The default Turbo environment variables patterns do not work in SvelteKit v2.0. Turbo uses `VITE_*` but SvelteKit uses `PUBLIC_*` and `PRIVATE_*`.
 
-## Creating a project
+## Instructions
 
-If you're seeing this, you've probably already done this step. Congrats!
+> [!NOTE] tl;dr
+> See the Vercel app comments in these PRs for more details:
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+Follow these steps to demonstrate the issue.
 
-# create a new project in my-app
-npm create svelte@latest my-app
+1. Run `npx create-turbo@latest -e with-svelte`
+2. Install `@sveltejs/adapter-vercel` and update `svelte.config.js`:
+
+```javascript
+import adapter from '@sveltejs/adapter-vercel';
+import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
+
+/** @type {import('@sveltejs/kit').Config} */
+const config = {
+	// Consult https://kit.svelte.dev/docs/integrations#preprocessors
+	// for more information about preprocessors
+	preprocess: vitePreprocess(),
+	kit: {
+		// adapter-auto only supports some environments, see https://kit.svelte.dev/docs/adapter-auto for a list.
+		// If your environment is not supported or you settled on a specific environment, switch out the adapter.
+		// See https://kit.svelte.dev/docs/adapters for more information about adapters.
+		adapter: adapter()
+	}
+};
+
+export default config;
 ```
 
-## Developing
+3. Add environment variables to `apps/web/.env` (this file is not in source control):
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+```env
+PUBLIC_STATIC="abc123"
+PRIVATE_STATIC="def456"
 ```
 
-## Building
+3. Import `PUBLIC_STATIC` to `apps/web/src/routes/+page.svelte`:
 
-To create a production version of your app:
+```svelte
+<script lang="ts">
+	import { PUBLIC_STATIC } from '$env/static/public';
+	import { MyCounterButton } from '@repo/ui';
 
-```bash
-npm run build
+	export let data;
+</script>
+
+<h1>Turbo Env Var Repro</h1>
+<MyCounterButton />
+<p>Environment variables:</p>
+<pre>
+{JSON.stringify(
+		{
+			...data,
+			PUBLIC_STATIC: `Imported on the client from $env/static/public: ${PUBLIC_STATIC}`
+		},
+		null,
+		2
+	)}
+</pre>
 ```
 
-You can preview the production build with `npm run preview`.
+4. Import `PRIVATE_STATIC` to `apps/web/src/routes/api/index.ts`:
 
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+```svelte
+import { PRIVATE_STATIC } from '$env/static/private';
+
+export function load() {
+	return {
+		PRIVATE_STATIC: `Loaded on the server from $env/static/private: ${PRIVATE_STATIC}`
+	};
+}
+```
+
+5. Run `pnpm dev` in `apps/web`. Open in the browser. The env vars are displayed as expected.
+
+6. Deploy to Vercel. The build will fail with an error similar to:
+
+```sh
+web:build: error during build:
+web:build: RollupError: "PUBLIC_STATIC" is not exported by "virtual:$env/static/public", imported by "src/routes/+page.svelte".
+web:build: file: /vercel/path0/apps/web/src/routes/+page.svelte:2:10
+web:build: 1: <script lang="ts">
+web:build: 2:   import { PUBLIC_STATIC } from '$env/static/public';
+web:build:               ^
+web:build: 3:   import { env } from '$env/dynamic/public';
+web:build: 4:   import { MyCounterButton } from '@repo/ui';
+```
+
+7. Update `turbo.json` to include `PUBLIC_*` and `PRIVATE_*` in the `env` array:
+
+```json
+{
+	"$schema": "https://turbo.build/schema.json",
+	"tasks": {
+		"build": {
+			"dependsOn": ["^build"],
+			"inputs": ["$TURBO_DEFAULT", ".env*"],
+			"outputs": [".svelte-kit/**", ".vercel/**"],
+			"env": ["PUBLIC_*", "PRIVATE_*"]
+		},
+		"lint": {},
+		"dev": {
+			"cache": false,
+			"persistent": true
+		}
+	}
+}
+```
+
+8. Redeploy to Vercel. The build will succeed.
