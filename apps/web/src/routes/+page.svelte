@@ -6,7 +6,7 @@
 	export let data;
 </script>
 
-<h1>Web</h1>
+<h1>Turbo Env Var Repro</h1>
 <MyCounterButton />
 <p>Environment variables:</p>
 <pre>
