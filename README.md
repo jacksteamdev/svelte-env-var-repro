@@ -11,7 +11,7 @@ There is no prefix for private env vars. SvelteKit default is that anything not 
 ## Instructions
 
 > [!NOTE]
-> See the Vercel app comments in these PRs for more details:
+> See [this PR](https://github.com/jacksteamdev/svelte-env-var-repro/pull/1) for an issue demo.
 
 Follow these steps to demonstrate the issue.
 
