@@ -6,7 +6,7 @@ The default Turbo environment variables patterns do not work in SvelteKit v2.0. 
 > Turbo framework inference should use `PUBLIC_*` as the default prefix for env vars.
 > Framework inference documentation should stress that variables not included in the framework defaults or explicitly in `turbo.json` will not be available for the build.
 
-There is no prefix for private env vars. SvelteKit defaults are anything not prefixed with `PUBLIC_` is private and can be used in routes. This means private env vars must be listed explicitly in `turbo.json` in the `env` array.
+There is no prefix for private env vars. SvelteKit default is that anything not prefixed with `PUBLIC_` is private and can be used in routes. However, this means private env vars must be listed explicitly in `turbo.json` in the `env` array.
 
 ## Instructions
 
