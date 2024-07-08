@@ -2,7 +2,7 @@
 
 The default Turbo environment variables patterns do not work in SvelteKit v2.0. Turbo has `VITE_*` for SvelteKit, but SvelteKit uses `PUBLIC_*` as the default prefix for public env vars.
 
-> [!TIP] Proposal
+> [!TIP]
 > Turbo framework inference should use `PUBLIC_*` as the default prefix for env vars.
 > Framework inference documentation should stress that variables not included in the framework defaults or explicitly in `turbo.json` will not be available for the build.
 
@@ -10,7 +10,7 @@ There is no prefix for private env vars. SvelteKit default is that anything not 
 
 ## Instructions
 
-> [!NOTE] tl;dr
+> [!NOTE]
 > See the Vercel app comments in these PRs for more details:
 
 Follow these steps to demonstrate the issue.
