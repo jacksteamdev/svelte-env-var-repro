@@ -1,7 +1,7 @@
-import { PRIVATE_STATIC } from '$env/static/private';
+import { SECRET_ENV_VAR } from '$env/static/private';
 
 export function load() {
 	return {
-		PRIVATE_STATIC: `Loaded on the server from $env/static/private: ${PRIVATE_STATIC}`
+		SECRET_ENV_VAR: `Loaded on the server from $env/static/private: ${SECRET_ENV_VAR}`
 	};
 }
