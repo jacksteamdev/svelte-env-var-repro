@@ -12,10 +12,6 @@
       "outputs": [
         ".svelte-kit/**",
         ".vercel/**"
-      ],
-      "env": [
-        "PUBLIC_*",
-        "PRIVATE_*"
       ]
     },
     "lint": {},
